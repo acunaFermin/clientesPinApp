@@ -38,5 +38,15 @@ public class ClientesController {
     public Cliente addCliente(@RequestBody ClienteDto cliente) {
         return this.clientesServ.save(cliente);
     }
+    
+    @GetMapping(value = {
+    "/clientes",
+    "/clientes/",
+    "/clientes/{path:^(?!api).*$}",
+    "/clientes/{path:^(?!api).*$}/**"
+    })
+    public String forwardAngularRoutes() {
+        return "forward:/index.html";
+    }
 
 }
