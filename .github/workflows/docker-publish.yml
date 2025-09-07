@@ -12,7 +12,6 @@ jobs:
       VPS_HOST: ${{ secrets.VPS_HOST }}
       VPS_USER: ${{ secrets.VPS_USER }}
       SSH_KEY:  ${{ secrets.SSH_PRIVATE_KEY }}
-      VPS_PORT: ${{ secrets.VPS_PORT }} # opcional
       TARGET_DIR: "/var/www/vicente/github-actions"
 
     steps:
@@ -27,14 +26,12 @@ jobs:
 
       - name: Confiar en la huella del servidor
         run: |
-          PORT=${VPS_PORT:-22}
-          ssh-keyscan -p "$PORT" "$VPS_HOST" >> ~/.ssh/known_hosts
+          ssh-keyscan -p 22 "$VPS_HOST" >> ~/.ssh/known_hosts
 
       - name: Crear carpeta y escribir index.html con echo
         run: |
-          PORT=${VPS_PORT:-22}
           REMOTE="$VPS_USER@$VPS_HOST"
-          ssh -p "$PORT" "$REMOTE" "
+          ssh -p 22 "$REMOTE" "
             mkdir -p '$TARGET_DIR' &&
             echo '<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\" /><title>Hola mundo</title></head><body><h1>¡Hola mundo!</h1></body></html>' > '$TARGET_DIR/index.html'
           "
