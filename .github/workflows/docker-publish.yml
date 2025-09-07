@@ -13,7 +13,7 @@ jobs:
       VPS_USER: ${{ secrets.VPS_USER }}
       SSH_KEY:  ${{ secrets.SSH_PRIVATE_KEY }}
       VPS_PORT: ${{ secrets.VPS_PORT }} # opcional
-      TARGET_DIR: "/var/www/hello-mundo"
+      TARGET_DIR: "/var/www/vicente/github-actions"
 
     steps:
       - name: Instalar OpenSSH client
