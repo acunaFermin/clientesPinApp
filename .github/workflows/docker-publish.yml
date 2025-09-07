@@ -24,6 +24,6 @@ jobs:
           # host_verification: true
           script: |
             TARGET_DIR="/var/www/vicente/github-actions"
-            sudo mkdir -p "$TARGET_DIR"
+            mkdir -p "$TARGET_DIR"
             echo '<!doctype html><html lang="es"><head><meta charset="utf-8" /><title>Hola mundo</title></head><body><h1>¡Hola mundo!</h1></body></html>' \
               | sudo tee "$TARGET_DIR/index.html" >/dev/null
