@@ -1,4 +1,4 @@
-name: Deploy hello with echo
+name: Deploy hello (appleboy)
 
 on:
   push:
@@ -8,34 +8,22 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
-      name: test env
-    permissions:
-      contents: read
-
-    env:
-      VPS_HOST: ${{ secrets.VPS_HOST }}
-      VPS_USER: ${{ secrets.VPS_USER }}
-      SSH_KEY:  ${{ secrets.SSH_PRIVATE_KEY }}
-      TARGET_DIR: "/var/www/vicente/github-actions"
+      name: test env   # si usás Environment secrets
 
     steps:
-      - name: Instalar OpenSSH client
-        run: sudo apt-get update && sudo apt-get install -y openssh-client
-
-      - name: Configurar clave SSH
-        run: |
-          mkdir -p ~/.ssh
-          printf "%s" "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-      - name: Confiar en la huella del servidor
-        run: |
-          ssh-keyscan -v -p 22 "$VPS_HOST" >> ~/.ssh/known_hosts
-
-      - name: Crear carpeta y escribir index.html con echo
-        run: |
-          REMOTE="$VPS_USER@$VPS_HOST"
-          ssh -v -p 22 "$REMOTE" "
-            mkdir -p '$TARGET_DIR' &&
-            echo '<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\" /><title>Hola mundo</title></head><body><h1>¡Hola mundo!</h1></body></html>' > '$TARGET_DIR/index.html'
-          "
+      - name: Ejecutar comandos en el VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}   # tu privada (BEGIN/END)
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
+          # Opcional, mejor usar known_hosts reales; si no, deja esto en true para pruebas
+          # fingerprint: ${{ secrets.VPS_HOST_FINGERPRINT }} 
+          # host_verification: true
+          script: |
+            TARGET_DIR="/var/www/vicente/github-actions"
+            sudo mkdir -p "$TARGET_DIR"
+            echo '<!doctype html><html lang="es"><head><meta charset="utf-8" /><title>Hola mundo</title></head><body><h1>¡Hola mundo!</h1></body></html>' \
+              | sudo tee "$TARGET_DIR/index.html" >/dev/null
